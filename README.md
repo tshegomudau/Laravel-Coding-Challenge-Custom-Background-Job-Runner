@@ -15,28 +15,31 @@ A custom, database-backed background job runner built in Laravel, designed to ex
 ## Setup Instructions
 
 ### 1. Clone and Install Dependencies
+```bash
 git clone https://github.com/tshegomudau/Laravel-Coding-Challenge-Custom-Background-Job-Runner.git
 cd Laravel-Coding-Challenge-Custom-Background-Job-Runner
 composer install
 cp .env.example .env
 php artisan key:generate
-
 php artisan migrate
-
+```
 
 ## 2. Register Scheduler Command
-## In App\Console\Kernel.php: Add
+### In App\Console\Kernel.php: Add
+```php
 protected function schedule(Schedule $schedule)
 {
     $schedule->command('jobs:process')->everyMinute();
 }
-
+```
 ## Then run Laravel’s scheduler (via cron or manually):
+```bash
 php artisan schedule:work
 php artisan jobs:process 
-
+```
 ## Usage
 ### Use runBackgroundJob helper:
+```php
 runBackgroundJob(
     \App\Jobs\TestJob::class,
     'handle',
@@ -53,19 +56,19 @@ runBackgroundJob(
         ],
     ]
 );
-
+```
 ## You can call this from controllers, services, etc.
 ### Example Controller
+```php
 public function test(Request $request)
 {
     runBackgroundJob(\App\Jobs\TestJob::class, 'handle', ['test-param']);
-
     return response()->json(['message' => 'Job dispatched!']);
 }
-
+```
 ## Test Interface
 ### The project includes a simple web-based test panel for triggering background jobs manually. It can be accessed at:
-#basepath/test-jobs
+[#basepath/test-jobs](http://your-domain/test-jobs)
 
 ## Button	Description
 ### Run Basic Job	Immediately runs a simple background job.
@@ -82,6 +85,8 @@ public function test(Request $request)
 
 ## Optional Features
 ### Priority Queueing
-#### Jobs are selected and dispatched by priority (lower = higher priority). Update jobs to set a priority value between 1–10 (default: 5).
+#### Jobs are selected and dispatched by priority (lower = higher priority). 
+#### Update jobs to set a priority value between 1–10 (default: 5).
 ### Job Chaining
-#### Jobs can schedule dependent jobs using the chain option. These chained jobs are stored in the same custom_jobs table and processed automatically.
+#### Use the chain option to define follow-up jobs.
+#### Chained jobs are queued in the same table and processed automatically.
